@@ -1,0 +1,208 @@
+---
+title: "Class 7: Machine Learning 1"
+author: "Rahul Nedunuri (PID:A16297840)"
+format: pdf
+editor: visual
+---
+
+## Clustering Methods
+Aim: find groupings (clusters) in your input dataset.
+
+## K means
+K: Number of clusters
+
+Let's make up some data to cluster.
+
+Make a vector, `tmp`, of length 60 with 30 points clustered around -3, and another 30 points clustered around +3.
+```{r}
+# To use rnorm: rnorm(num datapoints, mean = __, sd = ___)
+tmp <- c(rnorm(30, mean=-3), rnorm(30, mean=3))
+```
+
+
+I will now make a wee x and y dataset with 2 groups of points.
+```{r}
+x <- cbind(x=tmp, y=rev(tmp))
+wee <- plot(x)
+```
+
+```{r}
+k <- kmeans(x, centers=2)
+k
+```
+
+
+> Q. From your result object `k`, how many points are in each cluster?
+
+```{r}
+k$size
+```
+> Q. What "component" of your result object details the cluster membership?
+
+```{r}
+k$cluster
+```
+
+> Q. Cluster centers?
+
+```{r}
+k$centers
+```
+
+> Q. Plot of our clustering results?
+
+```{r}
+plot(x, col=k$cluster)
+points(k$centers, col="blue", pch=15, cex=1.5)
+
+```
+
+What if we clustered this same data into 4 groups?
+
+```{r}
+k4 <- kmeans(x, centers=4)
+plot(x, col=k4$cluster)
+```
+A big limitation of kmeans is that it will use the number of centers you give it: even if this number of clusters doesn't make sense.
+
+
+## Hierarchical Clustering
+
+The base R function for Hierarchical Clustering is `hclust()`.
+Unlike `kmeans()`, you __must__ calculate a __distance matrix__ before you can pass your data as input.
+
+- `kmeans()` finds a distance matrix on its own (under the hood)
+
+```{r}
+d <- dist(x)
+hc <- hclust(d, method="complete")
+hc
+```
+
+Use `plot()` to view results.
+
+
+```{r}
+plot(hc)
+abline(h=10, col='red')
+```
+Note that in the dendrogram, the height represents the magnitude of distance between two clusters.
+
+To make the cut and get the cluster membership, we can use the `cutree()` function.
+
+```{r}
+grps <- cutree(hc, h=10)
+grps
+```
+
+Make a plot of our data colored by hclust results.
+```{r}
+plot(x, col=grps)
+
+```
+## Principal Component Analysis (PCA)
+
+PCA is a method that reduces the dimensionality of features while only losing a small amount of information.
+
+
+- in a sense, we visualize the data spread by viewing the data in the context of PC's as the axes rather than the initial x and y axes
+- PCA is a filtering method of sorts
+
+PC1: First principal component  
+
+- __variation in PC1 is always more significant than variation in PC2__
+
+
+
+## PCA: Lab portion
+
+Here we will do PCA on some food data from the UK.
+
+Let's read the UK foods data and find out the dimensions
+### Q1
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url, row.names=1)
+dim(x)
+```
+
+Preview the dataframe
+```{r}
+head(x)
+```
+### Q2
+
+We could also have adjusted rownames and deleted the first column manually using `x <- x[,-1]`
+This approach is problematic because if you rerun it, you will keep trimming the dataframe and end up losing data (unless you reread the csv). It is better to read the csv with an argument to set rownames to column 1; this method is less destructive.
+
+###Q3
+
+Setting the `beside=` argument to false creates a single bar for each country.
+```{r}
+barplot(as.matrix(x), beside=F, col=rainbow(nrow(x)))
+
+```
+
+### Q5
+
+In this plot, a point on the diagonal means that there is a match between the count of that category across 2 countries. This is confusing to interpret.
+```{r}
+pairs(x, col=rainbow(10), pch=16)
+
+```
+
+### Q6
+The main difference in N. Ireland looks to be the blue and orange point categories since they differs more from the rest of the countries. 
+
+## PCA to the rescue
+
+The main base R function for PCA is called `prcomp()`
+
+```{r}
+# Use the prcomp() PCA function 
+pca <- prcomp( t(x) ) # t(x) transposes the dataframe so the countries become the rows
+summary(pca)
+```
+
+> Q. How much variance is captured by the first 2 PCs?
+
+96.5%
+
+PC1 is capturing 67.44% of the variation.  
+PC2 is capturing 29.05% of the variation.  
+PC3 is capturing 3.5% of the variation.  
+
+
+
+### Q7, Q8
+To make our main "PC score plot" or "PC1 vs PC2 plot" or "PC plot" or "Ordination plot"
+
+```{r}
+attributes(pca)
+```
+
+We are after the `pca$x` result component to generate our main PCA plot
+
+```{r}
+# Plot PC1 vs PC2
+plot(pca$x[,1], pca$x[,2], xlab="PC1 (67.4%)", ylab="PC2 (29%)", xlim=c(-270,500), col=c('orange', 'red', 'blue', 'darkgreen'), pch=16)
+#text(pca$x[,1], pca$x[,2], colnames(x), col=c('orange', 'red', 'blue', 'darkgreen'))
+```
+Another important result from PCA is how the original variables (example: foods) factor into the PC scores. 
+
+This is contained in the `pca$rotation` object (often called the "loadings" or "contributions")
+
+```{r}
+pca$rotation
+```
+
+
+We can make a plot along PC1.
+
+```{r}
+library(ggplot2)
+contrib <- as.data.frame(pca$rotation)
+ggplot(contrib, aes(PC1, rownames(contrib))) + geom_col()
+```
+

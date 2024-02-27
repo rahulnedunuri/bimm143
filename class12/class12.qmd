@@ -1,0 +1,159 @@
+---
+title: "Lab 12: Genome Informatics"
+author: "Rahul Nedunuri (PID: A16297840)"
+format: pdf
+editor: visual
+---
+
+# Section 1: Proportion of G|G in a population
+
+Q1: What are those 4 candidate SNPs?
+rs12936231,rs8067378,rs9303277, rs7216389
+
+Q2: What three genes do these variants overlap or effect?
+ZPBP2, IKZF3, GSDMB
+
+Q3: What is the location of rs8067378 and what are the different alleles for rs8067378?
+location: Chromosome.17:39895095.(forward strand)
+alleles: A/C/G | Ancestral:G |     Highest population MAF:0.50
+
+Q4: Name at least 3 downstream genes for rs8067378?
+GSDMA, CSF3, RARA
+
+
+
+Let's gather the data of the MXL SNPs for SNP rs8067378
+
+Downloaded CSV file...
+
+```{r}
+mxl <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+head(mxl)
+```
+
+```{r}
+table(mxl$Genotype..forward.strand.)
+
+```
+
+
+```{r}
+table(mxl$Genotype..forward.strand.) / nrow(mxl) * 100
+
+```
+
+Q5: What proportion of the Mexican Ancestry in LA sample population (MXL) are homozygous for the asthma associated SNP (G|G)?
+14.0625% are homozygous for G|G
+
+Let's look at a diff population. We picked GBR.
+
+
+```{r}
+gbr <- read.csv("373522-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+head(gbr)
+```
+
+Find portion of the population with G|G. 
+
+```{r}
+table(gbr$Genotype..forward.strand.) / nrow(gbr) * 100
+```
+
+
+Q6: Back on the ENSEMBLE page, use the “search for a sample” field above to find the particular sample HG00109. This is a male from the GBR population group. What is the genotype for this sample?
+```{r}
+gbr$Genotype..forward.strand.[grepl('HG00109', gbr$Sample..Male.Female.Unknown.)]
+
+```
+The genotype for this sample is G|G.
+
+
+The variant associated with childhood asthma is more common in GBR population than MXL
+
+# Section 2: Initial RNA-Seq analysis
+
+Q7: How many sequences are there in the first file? What is the file size and format of the data? Make sure the format is fastqsanger here!
+3,863 sequences
+
+Q8: What is the GC content and sequence length of the second fastq file?
+54% GC
+50-75 sequence length
+
+Q9: How about per base sequence quality? Does any base have a mean quality score below 20?
+Trimming is not needed, all bases have a mean quality > 20.
+
+# Section 3: Mapping RNA-Seq reads to genome
+
+Q10: Where are most the accepted hits located?
+chr17:38,150,000
+
+Q11: Following Q10, is there any interesting gene around that area?
+PSMD3
+
+Q12: Cufflinks again produces multiple output files that you can inspect from your right-hand-side galaxy history. From the “gene expression” output, what is the FPKM for the ORMDL3 gene? What are the other genes with above zero FPKM values?
+ORMDL3: 136853
+GSDMA: 133.634
+GSDMB: 26366.3
+ZPBP2: 4613.49
+PSMD3: 299021
+
+# Section 4: Population Scale Analysis
+
+Let's read this file: https://bioboot.github.io/bggn213_W19/class-material/rs8067378_ENSG00000172057.6.txt
+
+
+```{r}
+expr <- read.table("rs8067378_ENSG00000172057.6.txt")
+head(expr)
+```
+
+```{r}
+nrow(expr)
+```
+
+
+
+Let's make the boxplot
+
+
+
+Q13: Read this file into R and determine the sample size for each genotype and their
+corresponding median expression levels for each of these genotypes.
+
+```{r}
+table(expr$geno)
+```
+Sample sizes of each genotype
+A|A: 108
+A|G: 233
+G|G: 121
+
+```{r}
+paste('A|A median expression', median(expr$exp[grepl('A/A', expr$geno)]))
+paste('A|G median expression', median(expr$exp[grepl('A/G', expr$geno)]))
+paste('G|G median expression', median(expr$exp[grepl('G/G', expr$geno)]))
+
+```
+
+A|A median expression 31.248475
+A|G median expression 25.06486
+G|G median expression 20.07363
+
+
+Q14: Generate a boxplot with a box per genotype, what could you infer from the relative
+expression value between A/A and G/G displayed in this plot? Does the SNP effect the
+expression of ORMDL3? 
+
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+
+b <- ggplot(expr) + aes(geno, exp, fill=geno) +
+  geom_boxplot(notch=T)
+b
+
+```
+
+It appears that the SNP decreases expression of ORMDL3 in general, although this difference in relative expression level doesn't appear to be statistically significant as the interquartile ranges overlap with the medians of the expression data for each genotype.
+

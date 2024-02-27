@@ -1,0 +1,126 @@
+---
+title: "Class 10: Structural Bioinformatics Pt.1"
+author: "Rahul Nedunuri (A16297840)"
+format: pdf
+editor: visual
+---
+
+## 1. Introduction to the RCSB Protein Data Bank (PDB)
+
+Reading the data first
+
+```{r}
+pdbstats <- read.csv("pdb.csv", row.names=1)
+head(pdbstats)
+
+```
+
+The pdbstats df has numbers with commas in them which may be an issue. 
+
+> Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy.
+
+I can make a function to use for converting columns into integers.
+```{r}
+x = '22,000'
+sum(as.numeric(gsub(",", "", x)))
+
+```
+
+```{r}
+
+commasum <- function(x) {
+  sum(as.numeric(gsub(",", "", x)))
+}
+
+```
+
+Apply across all columns
+
+```{r}
+totals <- apply(pdbstats, 2, commasum)
+round(totals / totals['Total'] * 100, 2)
+```
+93.2% resolved by Xray(84.5%) and EM(8.7%)
+
+> Q2: What proportion of structures in the PDB are protein?
+
+```{r}
+round(commasum(pdbstats['Protein (only)','Total']) / commasum(pdbstats[,'Total'])* 100, 2)
+```
+86.65%
+
+## 2. Visualizing the HIV-1 protease structure
+
+We will learn the basics of Mol* (mol-star). https://molstar.org/viewer/
+
+We will play with the PDB code 1HSG
+
+
+> Q4: Water molecules normally have 3 atoms. Why do we see just one atom per water molecule in this structure?
+
+We see one atom per water molecule because Oxygen is large enough to be visible at this scale but Hydrogen is too small.
+
+> Q5: There is a critical “conserved” water molecule in the binding site. Can you identify this water molecule? What residue number does this water molecule have
+
+H2O 308
+
+> Q6: Generate and save a figure clearly showing the two distinct chains of HIV-protease along with the ligand. You might also consider showing the catalytic residues ASP 25 in each chain and the critical water (we recommend “Ball & Stick” for these side-chains). Add this figure to your Quarto document.
+
+> Discussion Topic: Can you think of a way in which indinavir, or even larger ligands and substrates, could enter the binding site?
+
+Larger ligands can enter the binding site since the flexible flaps of the protein are dynamic and can open to allow the protein to enter and bind to the active site.
+
+![1HSG with a bound inhibitor](1HSG.png)
+
+
+Show the ASP 25 residues
+
+![Asp25 residues in each protein of the homodimer](1HSG_asp25.png)
+
+![Critical H2O](1HSG_h2o.png)
+
+## Back to R and working with PDB structures
+
+Predict the dynamics and flexibility of a protein.
+
+```{r}
+#install.packages("bio3d")
+library(bio3d)
+
+hiv <- read.pdb("1hsg")
+
+hiv
+```
+
+> Q7: How many amino acid residues are there in this pdb obj
+
+198 amino acid residues. 
+
+> Q8: Name one of the two non-protein residues? 
+
+H2O.
+
+> Q9: How many protein chains are in this structure?
+
+2 protein chains in this structure.
+
+```{r}
+head(hiv$atom)
+```
+Here we will do a Normal Mode Analysis (NMA) to predict functional motions of a kinase.
+
+```{r}
+adk <- read.pdb("6s36")
+adk
+```
+```{r}
+modes <- nma(adk)
+plot(modes)
+```
+
+Make a movie called a trajectory of the predicted morions:
+
+```{r}
+mktrj(modes, file="adk_m7.pdb")
+```
+

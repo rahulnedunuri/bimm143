@@ -1,0 +1,69 @@
+---
+title: "Hw06"
+author: "Rahul Nedunuri (PID:A16297840)"
+date: 01/25/24
+format: pdf
+---
+
+## Q6: Optimization
+Here we will make a more robust version of the following code which analyzes a given protein's drug interactions and plots it...
+```{r }
+# install.packages("bio3d") 
+# Can you improve this analysis code?
+library(bio3d)
+
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s1, chain="A", elety="CA")
+
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+
+```
+
+I will write a function that serves the same purpose as the above code and also is more concise and reusable. 
+The function will take an input of any given protein's 4 digit PDB code and outputs a plot outlining the drug B factor interactions plotted against specific residues of the protein.
+
+## Shortened code  
+
+`plotBfactor()`
+```{r}
+#This function takes input prot which is the 4 letter PDB code
+#It will output a plot of Bfactor interactions vs amino acid residue position of prot
+
+plotBfactor <- function(prot) { 
+  #input: prot = "____" PDB code
+  
+  s <- read.pdb(prot) #reads the argument PDB code
+  s.chainA <- trim.pdb(s, chain="A", elety="CA")
+  s.b <- s.chainA$atom$b
+  
+  #creates plot of Bfactor vs amino acid position of prot
+  plotb3(s.b, sse=s.chainA, typ="l", ylab="Bfactor")
+}
+```
+
+
+Now let's test our `plotBfactor()` function.
+
+To use it, you just have to pass an existing 4 letter PDB code as a string argument to the function. The output will be a Bfactor vs Amino Acid Residue plot showing the relative mobility or rigidity of a protein. 
+
+```{r}
+#Example: To generate plot for PDB code 3EK2
+plotBfactor("3EK2")
+```
+
+```{r}
+#Example: To generate plot for PDB code 7TR7
+plotBfactor("7TR7")
+```
+
