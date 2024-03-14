@@ -10,7 +10,7 @@ Bioinformatics Laboratory Classwork [BIMM 143 Winter 2024 at UC San Diego](https
 - Class 9 [Halloween Candy PCA](https://github.com/rahulnedunuri/bimm143/blob/main/class09/class09_halloween.md)
 - Class 10 [Structural Bioinformatics Part 1](https://github.com/rahulnedunuri/bimm143/blob/main/class10/structuralbioinformatics1.md)
 - Class 11 [Structural Bioinformatics Part 2](https://github.com/rahulnedunuri/bimm143/blob/main/class11/structuralbioinformatics2.md)
-- Class 12 []()
+- Class 12 [Genome Informatics](https://github.com/rahulnedunuri/bimm143/blob/main/class12/class12.md)
 - Class 13 []()
 - Class 14 []()
 - Class 16 []()
