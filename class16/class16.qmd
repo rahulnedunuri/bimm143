@@ -1,0 +1,44 @@
+---
+title: "Class 16 Zebrafish TSV"
+author: "Rahul Nedunuri (PID: A16297840)"
+format: pdf
+editor: visual
+---
+
+## TSV file
+class16/mm-second.x.zebrafish.tsv
+
+
+```{r}
+library(ggplot2)
+library(bio3d)
+
+
+df <- read.table(file = 'mm-second.x.zebrafish.tsv', sep = '\t', header = F)
+colnames(df) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+head(df)
+
+```
+
+Histogram
+```{r}
+ggplot(df, aes(x=bitscore), breaks = 30) + 
+  geom_histogram(binwidth=10)
+```
+> What do you notice here? Note that larger bitscores are better.
+
+I notice that the distribution looks more or less bimodal, with peaks near 30 and then around 275. There is also a skewness with a few very high bitscores above 750.
+
+```{r}
+ggplot(df, aes(pident, bitscore)) + geom_point(alpha=0.1)
+```
+
+> Is there a straightforward relationship between percent identity ($pident) and bitscore ($bitscore) for the alignments we generated?
+
+There appears to be a positively correlated relationship between pident and bitscore. We notice, in general, that larger pidents tend to be associated with larger bitscores. 
+
+```{r}
+ggplot(df, aes((df$pident * (df$qend - df$qstart)), bitscore)) + geom_point(alpha=0.1) + geom_smooth()
+
+```
+
