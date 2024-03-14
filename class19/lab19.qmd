@@ -8,10 +8,10 @@ editor: visual
 library(bio3d)
 ```
 
-
 Score residue conservation
+
 ```{r}
-seqs <- read.fasta("A16297840_mutant_seq.fa")
+seqs <- read.fasta("A_mutant_seq.fa")
 
 
 # function for printing substitutions from the fasta sequences
@@ -30,11 +30,7 @@ substitutions(seqs)
 paste(seqs$ali[2,], collapse="")
 ```
 
-
 ```{r}
 paste(seqs$ali[1,], collapse="")
 
 ```
-
-
-
