@@ -3,7 +3,6 @@ Bioinformatics Laboratory Classwork [BIMM 143 Winter 2024 at UC San Diego](https
 
 ## Contents
 
-- Class 4 [](https://github.com/rahulnedunuri/bimm143/blob/main/class04/class04.pdf)
 - Class 5 [Data Visualization with ggplot2](https://github.com/rahulnedunuri/bimm143/blob/main/class05/class05.md)
 - Class 6 [R Functions and Packages](https://github.com/rahulnedunuri/bimm143/blob/main/class06/class06.md)
 - Class 7 [Machine Learning Part 1](https://github.com/rahulnedunuri/bimm143/blob/main/class07/class07.machine_learning1.md)
