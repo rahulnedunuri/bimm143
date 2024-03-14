@@ -140,6 +140,3 @@ r <- ggplot(gapminder_top5) +
 
 r
 ```
-
-```{}
-```
