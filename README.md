@@ -1,2 +1,6 @@
 # BIMM 143
-Bioinformatics Laboratory Classwork (Winter 2024 at UC San Diego)
+Bioinformatics Laboratory Classwork [BIMM 143 Winter 2024 at UC San Diego](https://bioboot.github.io/bimm143_W24/).
+
+## Contents
+
+
