@@ -13,7 +13,7 @@ Bioinformatics Laboratory Classwork [BIMM 143 Winter 2024 at UC San Diego](https
 - Class 12 [Genome Informatics](https://github.com/rahulnedunuri/bimm143/blob/main/class12/class12.md)
 - Class 13 [Transcriptomics and RNAseq](https://github.com/rahulnedunuri/bimm143/blob/main/class13/transcriptomics_RNAseq.md)
 - Class 14 [RNAseq Project](https://github.com/rahulnedunuri/bimm143/blob/main/class14/lab14.md)
-- Class 16 []()
+- Class 16 [](https://github.com/rahulnedunuri/bimm143/blob/main/class16/class16.md)
 - Class 17 []()
 - Class 18 []()
 - Class 19 []()
